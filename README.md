@@ -1,6 +1,6 @@
 # BQNN Benchmark
 
-A minimal but fully functional benchmark harness for **Binarized Quantum Neural Networks (BQNNs)** that interpolate between classical and quantum regimes via a single quantumness parameter `a`.
+A minimal but fully functional benchmark harness for **Binarized Quantum Neural Networks (BQNNs)** that interpolates between classical and quantum regimes via a single quantumness parameter `a`.
 
 ## Key Results
 
