@@ -48,6 +48,7 @@ from .noise_models import (
     NoiseConfig,
     NoiseType,
 )
+from .benchmark import BenchmarkRun, set_global_seed, load_run
 
 __all__ = [
     # Version
@@ -79,4 +80,8 @@ __all__ = [
     "estimate_noise_threshold",
     "NoiseConfig",
     "NoiseType",
+    # Benchmarking
+    "BenchmarkRun",
+    "set_global_seed",
+    "load_run",
 ]

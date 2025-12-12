@@ -80,6 +80,13 @@ pip install -e ".[qiskit]"
 pip install -e ".[dev]"
 ```
 
+### Working on your own fork
+
+If you are hacking on this repository alone and do not need code review, you can
+commit and push directly to your branch without opening a pull request. Pull
+requests remain useful for CI and historical context, but they are optional for
+solo development workflows.
+
 ### Requirements
 - Python ≥3.10
 - PyTorch ≥2.0
