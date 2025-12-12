@@ -14,10 +14,12 @@ import numpy as np
 from bqnn import (
     get_synthetic_dataset,
     BQNNModel,
+    BenchmarkRun,
     train_epoch,
     evaluate_accuracy,
 )
 from bqnn.utils.plots import plot_heatmap, save_figure
+from bqnn.utils.report import save_report
 
 
 def main():
@@ -27,17 +29,31 @@ def main():
     print("=" * 60)
     print(f"Device: {device}")
 
+    n_features = 16
+    n_hidden = 8
+    n_classes = 2
+
+    runner = BenchmarkRun(
+        name="exp_noise_threshold",
+        seed=123,
+        config={
+            "n_features": n_features,
+            "n_hidden": n_hidden,
+            "n_classes": n_classes,
+            "epochs": 3,
+            "train_samples": 1024,
+            "test_samples": 256,
+        },
+        metadata={"description": "Noise robustness sweep"},
+    )
+
     # Use different seeds for proper train/test separation
     train_loader = get_synthetic_dataset(
-        n_samples=1024, n_features=16, batch_size=64, seed=42
+        n_samples=1024, n_features=16, batch_size=64, seed=runner.record.seed
     )
     test_loader = get_synthetic_dataset(
         n_samples=256, n_features=16, batch_size=64, seed=12345
     )
-
-    n_features = 16
-    n_hidden = 8
-    n_classes = 2
 
     # Parameter grids
     a_values = [0.0, 0.25, 0.5, 0.75, 1.0]
@@ -67,9 +83,10 @@ def main():
 
             # Train with persistent optimizer
             optimizer = torch.optim.Adam(model.parameters(), lr=1e-3)
-            for epoch in range(3):
-                stats = train_epoch(model, train_loader, device=device, lr=1e-3, optimizer=optimizer)
-                print(f"  epoch {epoch+1}: loss={stats['loss']:.4f}")
+            with runner.time_section(f"train_a_{a}_noise_{n_pairs}"):
+                for epoch in range(3):
+                    stats = train_epoch(model, train_loader, device=device, lr=1e-3, optimizer=optimizer)
+                    print(f"  epoch {epoch+1}: loss={stats['loss']:.4f}")
             
             metrics = evaluate_accuracy(model, test_loader, device=device)
             acc = metrics["accuracy"]
@@ -89,7 +106,8 @@ def main():
     print("=" * 60)
     
     # Print header
-    header = f"{'a \\ noise':>10}"
+    header_label = "a \\ noise"
+    header = f"{header_label:>10}"
     for np_val in noise_pairs_values:
         header += f" | {np_val:>6}"
     print(header)
@@ -147,13 +165,27 @@ def main():
             title="BQNN Accuracy: Quantumness vs Noise Depth",
             annotate=True,
         )
-        
-        save_figure(fig, "results/noise_heatmap")
-        
+
+        paths = save_figure(fig, runner.run_dir / "noise_heatmap")
+        for p in paths:
+            runner.add_artifact(p, description="Noise vs quantumness heatmap")
+
         import matplotlib.pyplot as plt
         plt.show()
     except Exception as e:
         print(f"\nPlotting skipped: {e}")
+
+    runner.add_metrics(
+        {
+            "best_accuracy": float(acc_grid[best_idx]),
+            "best_a": best_a,
+            "best_noise_pairs": best_noise,
+            "accuracy_matrix_shape": [len(a_values), len(noise_pairs_values)],
+        }
+    )
+    runner.save_json("results_table.json", {"rows": results_table})
+    run_payload = runner.finalize()
+    save_report(runner.run_dir, run_data=run_payload)
 
 
 if __name__ == "__main__":

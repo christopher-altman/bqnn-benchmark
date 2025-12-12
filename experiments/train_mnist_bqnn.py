@@ -10,11 +10,13 @@ Usage:
 
 import torch
 
+from bqnn import BenchmarkRun
 from bqnn.data import get_mnist_small
 from bqnn.classical_reference import ClassicalBinarizedNet
 from bqnn.model import BQNNModel
 from bqnn.training import train_model, TrainingConfig
 from bqnn.inference import evaluate_accuracy, evaluate_full
+from bqnn.utils.report import save_report
 
 
 def main():
@@ -28,6 +30,20 @@ def main():
     n_features = size * size
     n_hidden = 8
     n_classes = 2
+
+    runner = BenchmarkRun(
+        name="train_mnist_bqnn",
+        seed=7,
+        config={
+            "size": size,
+            "n_hidden": n_hidden,
+            "n_classes": n_classes,
+            "epochs": 5,
+            "train_samples": 2000,
+            "test_samples": 600,
+        },
+        metadata={"description": "MNIST 0/1 benchmark"},
+    )
 
     # Load data with proper train/test splits
     print("\nLoading MNIST data...")
@@ -65,11 +81,12 @@ def main():
     )
     
     config = TrainingConfig(lr=1e-3, grad_clip=1.0)
-    history = train_model(
-        baseline, train_loader, test_loader,
-        n_epochs=5, config=config, device=device, verbose=True
-    )
-    
+    with runner.time_section("baseline_training"):
+        history = train_model(
+            baseline, train_loader, test_loader,
+            n_epochs=5, config=config, device=device, verbose=True
+        )
+
     base_metrics = evaluate_full(baseline, test_loader, device=device)
     print(f"\nBaseline Results:")
     print(f"  Accuracy: {base_metrics['accuracy']:.3f}")
@@ -94,11 +111,12 @@ def main():
     
     print(f"Circuit info: {model.get_circuit_info()}")
 
-    history = train_model(
-        model, train_loader, test_loader,
-        n_epochs=5, config=config, device=device, verbose=True
-    )
-    
+    with runner.time_section("bqnn_training_clean"):
+        history = train_model(
+            model, train_loader, test_loader,
+            n_epochs=5, config=config, device=device, verbose=True
+        )
+
     bqnn_metrics = evaluate_full(model, test_loader, device=device)
     print(f"\nBQNN Results:")
     print(f"  Accuracy: {bqnn_metrics['accuracy']:.3f}")
@@ -122,10 +140,11 @@ def main():
     
     print(f"Circuit info: {model_noisy.get_circuit_info()}")
 
-    history = train_model(
-        model_noisy, train_loader, test_loader,
-        n_epochs=5, config=config, device=device, verbose=True
-    )
+    with runner.time_section("bqnn_training_noisy"):
+        history = train_model(
+            model_noisy, train_loader, test_loader,
+            n_epochs=5, config=config, device=device, verbose=True
+        )
     
     bqnn_noisy_metrics = evaluate_full(model_noisy, test_loader, device=device)
     print(f"\nBQNN-Noisy Results:")
@@ -161,6 +180,19 @@ def main():
         print("✓ BQNN is noise-robust (maintains within 5% of baseline)")
     else:
         print("✗ Significant performance degradation under noise")
+
+    runner.add_metrics(
+        {
+            "baseline_accuracy": round(base_metrics["accuracy"], 4),
+            "baseline_macro_f1": round(base_metrics["macro_f1"], 4),
+            "bqnn_accuracy": round(bqnn_metrics["accuracy"], 4),
+            "bqnn_macro_f1": round(bqnn_metrics["macro_f1"], 4),
+            "bqnn_noisy_accuracy": round(bqnn_noisy_metrics["accuracy"], 4),
+            "bqnn_noisy_macro_f1": round(bqnn_noisy_metrics["macro_f1"], 4),
+        }
+    )
+    run_payload = runner.finalize()
+    save_report(runner.run_dir, run_data=run_payload)
 
 
 if __name__ == "__main__":
