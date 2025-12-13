@@ -51,6 +51,8 @@ bqnn-sweep = "experiments.exp_sweep_a:main"
 bqnn-mnist = "experiments.train_mnist_bqnn:main"
 bqnn-noise = "experiments.exp_noise_threshold:main"
 
+bqnn-run-sweep = "experiments.run_sweep:main"
+
 [project.urls]
 Homepage = "https://github.com/example/bqnn-benchmark"
 Documentation = "https://github.com/example/bqnn-benchmark#readme"

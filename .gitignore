@@ -74,6 +74,9 @@ results/
 *.pdf
 
 # Temporary files
+*.tmp
+*.log
+es
 tmp/
 temp/
 *.tmp

@@ -7,8 +7,6 @@ Provides synthetic binary classification data and tiny MNIST.
 from typing import Tuple, Optional
 import torch
 from torch.utils.data import TensorDataset, DataLoader
-from torchvision.datasets import MNIST
-from torchvision import transforms
 
 
 def get_synthetic_dataset(
@@ -76,6 +74,14 @@ def get_mnist_small(
     Returns:
         DataLoader yielding (features, labels) batches
     """
+    try:
+        from torchvision.datasets import MNIST
+        from torchvision import transforms
+    except Exception as e:
+        raise ImportError(
+            "get_mnist_small requires torchvision; install it with `pip install torchvision`."
+        ) from e
+
     transform = transforms.Compose([
         transforms.Resize((size, size)),
         transforms.ToTensor(),

@@ -7,7 +7,7 @@ from pathlib import Path
 
 import numpy as np
 import matplotlib.pyplot as plt
-import matplotlib.colors as mcolors
+import numpy.typing as npt
 
 
 def plot_accuracy_vs_a(
@@ -265,6 +265,93 @@ def plot_quantum_classical_comparison(
     
     fig.tight_layout()
     return fig
+
+
+
+def aggregate_metrics(
+    results: List[Dict[str, Any]], param_key: str, metric_key: str
+) -> Dict[Any, Dict[str, float]]:
+    """Aggregate a metric grouped by a parameter key.
+
+    Returns mapping: param_value -> {mean, std, count}.
+    """
+    buckets: Dict[Any, List[float]] = {}
+    for row in results:
+        if param_key not in row or metric_key not in row:
+            continue
+        buckets.setdefault(row[param_key], []).append(float(row[metric_key]))
+
+    summary: Dict[Any, Dict[str, float]] = {}
+    for k, vals in buckets.items():
+        arr: npt.NDArray[np.float_] = np.asarray(vals, dtype=float)
+        summary[k] = {"mean": float(arr.mean()), "std": float(arr.std()), "count": int(arr.size)}
+    return summary
+
+
+def _prepare_series(summary: Dict[Any, Dict[str, float]]):
+    items = sorted(summary.items(), key=lambda kv: kv[0])
+    labels = [str(k) for k, _ in items]
+    means = [v["mean"] for _, v in items]
+    stds = [v.get("std", 0.0) for _, v in items]
+    x = np.arange(len(items))
+    return x, labels, means, stds
+
+
+def plot_metric_curve(
+    summary: Dict[Any, Dict[str, float]],
+    param_label: str,
+    metric_label: str,
+    ax: Optional[plt.Axes] = None,
+) -> plt.Figure:
+    """Line plot with error bars for aggregated sweep metrics."""
+    if ax is None:
+        fig, ax = plt.subplots(figsize=(8, 5))
+    else:
+        fig = ax.figure
+
+    if not summary:
+        ax.set_title(f"{metric_label} vs {param_label} (no data)")
+        return fig
+
+    x, labels, means, stds = _prepare_series(summary)
+    ax.errorbar(x, means, yerr=stds, fmt="o-", capsize=4)
+    ax.set_xticks(x)
+    ax.set_xticklabels(labels)
+    ax.set_xlabel(param_label)
+    ax.set_ylabel(metric_label)
+    ax.set_title(f"{metric_label} vs {param_label}")
+    ax.grid(True, alpha=0.3)
+    fig.tight_layout()
+    return fig
+
+
+def plot_metric_bar(
+    summary: Dict[Any, Dict[str, float]],
+    param_label: str,
+    metric_label: str,
+    ax: Optional[plt.Axes] = None,
+) -> plt.Figure:
+    """Bar chart with error bars for aggregated sweep metrics."""
+    if ax is None:
+        fig, ax = plt.subplots(figsize=(8, 5))
+    else:
+        fig = ax.figure
+
+    if not summary:
+        ax.set_title(f"{metric_label} vs {param_label} (no data)")
+        return fig
+
+    x, labels, means, stds = _prepare_series(summary)
+    ax.bar(x, means, yerr=stds, capsize=4, alpha=0.85)
+    ax.set_xticks(x)
+    ax.set_xticklabels(labels)
+    ax.set_xlabel(param_label)
+    ax.set_ylabel(metric_label)
+    ax.set_title(f"{metric_label} vs {param_label}")
+    ax.grid(True, axis="y", alpha=0.3)
+    fig.tight_layout()
+    return fig
+
 
 
 def save_figure(

@@ -49,6 +49,7 @@ from .noise_models import (
     NoiseType,
 )
 from .benchmark import BenchmarkRun, set_global_seed, load_run
+from .sweeps import SweepConfig, SweepSpace, run_sweep
 
 __all__ = [
     # Version
@@ -84,4 +85,8 @@ __all__ = [
     "BenchmarkRun",
     "set_global_seed",
     "load_run",
+    # Sweeps
+    "SweepConfig",
+    "SweepSpace",
+    "run_sweep",
 ]

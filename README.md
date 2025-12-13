@@ -332,3 +332,30 @@ MIT
   url={https://github.com/christopher-altman/bqnn-benchmark}
 }
 ```
+
+
+### Hyperparameter sweeps (grid or random)
+
+A sweep runs many short trainings across a small parameter grid (or a random subset),
+writes a JSON + CSV table, and emits a few aggregated plots into a timestamped run folder.
+
+**Grid sweep**
+```bash
+python -m experiments.run_sweep \
+  --name sweep_demo \
+  --a 0.0 0.2 0.5 1.0 \
+  --lr 1e-3 5e-4 \
+  --noise-pairs 0 2 4 \
+  --noise-angle 0.0 0.05 \
+  --epochs 5
+```
+
+**Random sweep**
+```bash
+python -m experiments.run_sweep --search random --num-samples 12
+```
+
+Artifacts land under:
+- `results/sweeps/<timestamp>_<name>/sweep_results.json`
+- `results/sweeps/<timestamp>_<name>/sweep_results.csv`
+- `results/sweeps/<timestamp>_<name>/*.png` and `*.pdf`
