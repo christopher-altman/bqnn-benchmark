@@ -1,6 +1,6 @@
 # BQNN Benchmark
 
-A minimal but fully functional benchmark harness for **Binarized Quantum Neural Networks (BQNNs)** that interpolates between classical and quantum regimes via a single quantumness parameter `a`.
+*A minimal but fully functional benchmark harness for **Binarized Quantum Neural Networks (BQNNs)** that interpolates between classical and quantum regimes via a single quantumness parameter* `a`.
 
 
 [![Python 3.10+](https://img.shields.io/badge/python-3.10+-blue.svg)](https://www.python.org/downloads/)
@@ -330,22 +330,6 @@ Test on problems with natural quantum structure:
 - Time series with phase relationships
 - Combinatorial optimization landscapes
 
-## License
-
-MIT
-
-## Citation
-
-```bibtex
-@software{bqnn_benchmark,
-  title={BQNN Benchmark: Tunable Quantum Neural Network Framework},
-  author={Altman, Christopher},
-  year={2025},
-  url={https://github.com/christopher-altman/bqnn-benchmark}
-}
-```
-
-
 ### Hyperparameter sweeps (grid or random)
 
 A sweep runs many short trainings across a small parameter grid (or a random subset),
@@ -371,3 +355,48 @@ Artifacts land under:
 - `results/sweeps/<timestamp>_<name>/sweep_results.json`
 - `results/sweeps/<timestamp>_<name>/sweep_results.csv`
 - `results/sweeps/<timestamp>_<name>/*.png` and `*.pdf`
+
+---
+
+## References
+
+1. C. Altman, J. Pykacz & R. Zapatrin, “Superpositional Quantum Network Topologies,” *International Journal of Theoretical Physics* 43, 2029–2041 (2004).
+   DOI: [10.1023/B:IJTP.0000049008.51567.ec](https://doi.org/10.1023/B:IJTP.0000049008.51567.ec) · arXiv: [q-bio/0311016](https://arxiv.org/abs/q-bio/0311016)
+
+2. C. Altman & R. Zapatrin, “Backpropagation in Adaptive Quantum Networks,” *International Journal of Theoretical Physics* 49, 2991–2997 (2010).  
+   DOI: [10.1007/s10773-009-0103-1](https://doi.org/10.1007/s10773-009-0103-1) · arXiv: [0903.4416](https://arxiv.org/abs/0903.4416)
+
+
+---
+
+## Citations
+
+If you use or build on this work, please cite:
+
+> A Fully-functional benchmark harness for Binarized Quantum Neural Networks (BQNNs)
+
+```bibtex
+@software{altman2025bqnn-benchmark,
+  author = {Altman, Christopher},
+  title = {A Fully-functional Benchmark Harness for Binarized Quantum Neural Networks (BQNNs)},
+  year = {2025},
+  url = {https://github.com/christopher-altman/bqnn-benchmark}
+}
+```
+
+## License
+
+MIT License. See [LICENSE](LICENSE) for details.
+
+---
+
+## Contact
+
+- **Website:** [christopheraltman.com](https://christopheraltman.com)
+- **GitHub:** [github.com/christopher-altman](https://github.com/christopher-altman)
+- **Google Scholar:** [scholar.google.com/citations?user=tvwpCcgAAAAJ](https://scholar.google.com/citations?user=tvwpCcgAAAAJ)
+- **Email:** x@christopheraltman.com
+
+---
+
+*Christopher Altman (2025)*
