@@ -23,6 +23,65 @@
 
 **Scientific conclusion:** Quantum advantage exists on structured tasks (parity), not on linearly-separable ones (MNIST binary). The quantum layer acts as an equivalent nonlinearity to tanh when entanglement is disabled.
 
+---
+
+### Equation rendering (LaTeX as SVG)
+GitHub renders these equations via **Codecogs** (external) using SVG images:
+
+<p align="center">
+  <img src="https://latex.codecogs.com/svg.image?\dpi{120}\Large%20K(x,x')%3D%7C%5Clangle%5Cpsi(x)%7C%5Cpsi(x')%5Crangle%7C%5E2" />
+</p>
+
+## Math Snapshot (BQNN core)
+
+<p align="center">
+  <picture>
+    <source media="(prefers-color-scheme: dark)"
+      srcset="https://latex.codecogs.com/svg.image?%5Cdpi{120}%5CLarge%20%5Ccolor%7Bwhite%7D%20w_b%3D%5Coperatorname%7Bsign%7D(w)%20%5Cquad%20%5Ctext%7Bbinarization%7D">
+    <img src="https://latex.codecogs.com/svg.image?%5Cdpi{120}%5CLarge%20w_b%3D%5Coperatorname%7Bsign%7D(w)%20%5Cquad%20%5Ctext%7Bbinarization%7D" alt="equation">
+  </picture>
+</p>
+
+<p align="center">
+  <picture>
+    <source media="(prefers-color-scheme: dark)"
+      srcset="https://latex.codecogs.com/svg.image?%5Cdpi{120}%5CLarge%20%5Ccolor%7Bwhite%7D%20%5Cfrac%7B%5Cpartial%20w_b%7D%7B%5Cpartial%20w%7D%20%5Capprox%201%20%5Cquad%20%5Ctext%7BSTE%3A%20straight-through%20estimator%7D">
+    <img src="https://latex.codecogs.com/svg.image?%5Cdpi{120}%5CLarge%20%5Cfrac%7B%5Cpartial%20w_b%7D%7B%5Cpartial%20w%7D%20%5Capprox%201%20%5Cquad%20%5Ctext%7BSTE%3A%20straight-through%20estimator%7D" alt="equation">
+  </picture>
+</p>
+
+<p align="center">
+  <picture>
+    <source media="(prefers-color-scheme: dark)"
+      srcset="https://latex.codecogs.com/svg.image?%5Cdpi{120}%5CLarge%20%5Ccolor%7Bwhite%7D%20%5Ctheta(x%3Ba)%3D(1-a)%5C,%5Ctheta_%5Ctext%7Bcont%7D(x)%20%2B%20a%5C,%5Ctheta_%5Ctext%7Bbin%7D(%5Coperatorname%7Bsign%7D(x))">
+    <img src="https://latex.codecogs.com/svg.image?%5Cdpi{120}%5CLarge%20%5Ctheta(x%3Ba)%3D(1-a)%5C,%5Ctheta_%5Ctext%7Bcont%7D(x)%20%2B%20a%5C,%5Ctheta_%5Ctext%7Bbin%7D(%5Coperatorname%7Bsign%7D(x))" alt="equation">
+  </picture>
+</p>
+
+<p align="center">
+  <picture>
+    <source media="(prefers-color-scheme: dark)"
+      srcset="https://latex.codecogs.com/svg.image?%5Cdpi{120}%5CLarge%20%5Ccolor%7Bwhite%7D%20%7C%5Cpsi(x)%5Crangle%3D%5Cleft(%5Cprod_j%20R_X(%5Ctheta_j)%5Cright)%5Cleft(%5Cprod_k%20R_Z(%5Cvarphi_k)%5Cright)%5C,%7C0%5Crangle%5E%7B%5Cotimes%20n%7D">
+    <img src="https://latex.codecogs.com/svg.image?%5Cdpi{120}%5CLarge%20%7C%5Cpsi(x)%5Crangle%3D%5Cleft(%5Cprod_j%20R_X(%5Ctheta_j)%5Cright)%5Cleft(%5Cprod_k%20R_Z(%5Cvarphi_k)%5Cright)%5C,%7C0%5Crangle%5E%7B%5Cotimes%20n%7D" alt="equation">
+  </picture>
+</p>
+
+---
+
+## Pipeline
+
+```mermaid
+flowchart LR
+  A[Input x] --> B[Binarize / continuous map];
+  B --> C[RX encodings];
+  C --> D[Trainable RZ phases];
+  D --> E[Optional entanglement];
+  E --> F[<X> measurements];
+  F --> G[Classical head + loss];
+```
+
+---
+
 ## Project Structure
 
 ```
